@@ -1,5 +1,6 @@
 package com.example
 
+import android.os.Build
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -18,12 +19,23 @@ class MainActivity : ComponentActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
+        // Instantly dismiss system splash screen so custom full-screen app_splash is displayed immediately
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+            splashScreen.setOnExitAnimationListener { splashScreenView ->
+                splashScreenView.remove()
+            }
+        }
+
         enableEdgeToEdge()
         setContent {
             var showSplash by remember { mutableStateOf(true) }
 
             if (showSplash) {
-                SplashScreen(onDismiss = { showSplash = false })
+                SplashScreen(onDismiss = {
+                    window.setBackgroundDrawable(null)
+                    showSplash = false
+                })
             } else {
                 MainApp(viewModel = viewModel)
             }
