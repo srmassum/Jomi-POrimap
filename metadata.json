@@ -1,0 +1,6 @@
+{
+  "name": "ভূমি পরিমাপ",
+  "description": "জমির ক্ষেত্রফল ক্যালকুলেটর ও রূপান্তর",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

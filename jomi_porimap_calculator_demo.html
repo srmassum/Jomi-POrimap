@@ -1,0 +1,282 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>ভূমি পরিমাপ — জমির ক্ষেত্রফল ক্যালকুলেটর</title>
+<meta name="theme-color" content="#2E2A86">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Hind+Siliguri:wght@500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#F3F5FB;--card:#fff;--ink:#0F172A;--soft:#5B6780;--line:#E2E8F0;--chip:#EEF1FA;--acc:#4338CA;
+--g1:#2E2A86;--g2:#4F46E5;--g3:#06B6D4;
+--c-shotok:#10B981;--c-katha:#F59E0B;--c-bigha:#F43F5E;--c-acre:#8B5CF6;--c-sqm:#0EA5E9;--c-sqft:#64748B;--c-sqhat:#14B8A6;
+box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#0B1020;--card:#151B2E;--ink:#E8ECF8;--soft:#9AA7C2;--line:#252D47;--chip:#1C2440;--acc:#A5B4FC}}
+:root[data-theme="dark"]{--bg:#0B1020;--card:#151B2E;--ink:#E8ECF8;--soft:#9AA7C2;--line:#252D47;--chip:#1C2440;--acc:#A5B4FC}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+body{margin:0;background:var(--bg);color:var(--ink);font:500 15px/1.5 'Hind Siliguri','Noto Sans Bengali',system-ui,sans-serif}
+button{font:inherit;cursor:pointer}
+button:focus-visible,input:focus-visible{outline:3px solid var(--acc);outline-offset:2px}
+.app{max-width:440px;margin:0 auto;min-height:100vh;min-height:100dvh;display:flex;flex-direction:column;background:var(--bg)}
+@media(min-width:480px){.app{box-shadow:0 0 0 1px var(--line),0 30px 60px -30px rgba(15,23,42,.45)}}
+.hero{background:radial-gradient(circle at 90% -10%,rgba(255,255,255,.28),transparent 45%),linear-gradient(140deg,rgba(46,42,134,.86),rgba(79,70,229,.78) 60%,rgba(6,182,212,.7)),url("https://assets.telegraphindia.com/abp/2018/8/18/1606624016_5fc3231087367_rice.jpg") center/cover no-repeat #2E2A86;color:#fff;padding:20px 20px 100px;flex:none;border-radius:0 0 32px 32px}
+.top{display:flex;align-items:center;gap:12px}
+.logo{width:42px;height:42px;border-radius:13px;background:rgba(255,255,255,.18);display:grid;place-items:center}
+.logo svg{width:24px;height:24px;stroke:#fff;fill:none;stroke-width:2;stroke-linejoin:round}
+.top h1{font-size:20px;margin:0;line-height:1.2}.top p{margin:0;font-size:12.5px;opacity:.85}
+.stage{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-top:16px;padding:12px 16px;border-radius:22px;background:rgba(255,255,255,.13);border:1px solid rgba(255,255,255,.25);-webkit-backdrop-filter:blur(8px);backdrop-filter:blur(8px)}
+#svg{flex:0 0 46%;width:46%;height:auto}
+#svg *{fill:rgba(255,255,255,.22);stroke:#fff;stroke-width:2.5;stroke-linejoin:round}
+.tot{text-align:end;flex:1;min-width:0}.tot small{font-size:12.5px;opacity:.85}.tot b{display:block;font-size:34px;line-height:1.15;font-weight:700}
+.app:not([data-v="calc"]) .stage{display:none}
+.view{display:none;margin:-76px 16px 0}.view.on{display:block;padding-bottom:28px}
+.chips{display:flex;gap:8px;overflow-x:auto;margin:0 -16px;padding:2px 16px 6px;scrollbar-width:none}.chips::-webkit-scrollbar{display:none}
+.chip{flex:0 0 auto;display:flex;align-items:center;gap:7px;padding:9px 14px;border-radius:999px;border:1.5px solid var(--line);background:var(--card);color:var(--ink);font-weight:600}
+.chip svg,.ico svg{width:20px;height:20px;stroke:var(--c);fill:none;stroke-width:2;stroke-linejoin:round}
+.chip.on{background:var(--c);border-color:var(--c);color:#fff}.chip.on svg{stroke:#fff}
+.card{background:var(--card);border-radius:20px;padding:16px;margin-top:12px;box-shadow:0 10px 26px -16px rgba(30,41,90,.4)}
+.row2{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:12px}
+.seg{display:inline-flex;background:var(--chip);border-radius:12px;padding:3px}
+.seg button{border:0;background:none;padding:6px 14px;border-radius:9px;font-weight:600;color:var(--soft)}
+.seg .on{background:var(--card);color:var(--acc);box-shadow:0 2px 6px -2px rgba(0,0,0,.25)}
+.g{display:grid;grid-template-columns:repeat(var(--n),minmax(0,1fr));gap:10px}
+.grp{margin-bottom:14px;padding:12px;border-radius:14px;background:var(--chip)}.grp b{display:block;margin-bottom:8px;font-size:13px}
+.f{display:block;min-width:0}.f span{font-size:12.5px;color:var(--soft)}
+.f div{display:flex;align-items:center;margin-top:4px;border:1.5px solid var(--line);border-radius:12px;background:var(--bg);padding:0 10px}
+.f div:focus-within{border-color:var(--g2);box-shadow:0 0 0 3px rgba(79,70,229,.2)}
+.f input{flex:1;min-width:0;border:0;background:none;padding:10px 0;font:inherit;font-size:17px;font-weight:700;color:var(--ink);outline:none}
+.f em{font-style:normal;font-size:12px;color:var(--soft)}
+.ghost{border:1.5px dashed var(--line);background:none;color:var(--acc);border-radius:12px;padding:8px 14px;font-weight:600}
+.tiles{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.tile{border-radius:16px;padding:12px 14px;background:var(--chip);background:color-mix(in srgb,var(--c) 15%,var(--card));border:1px solid color-mix(in srgb,var(--c) 35%,transparent)}
+.tile.big{grid-column:span 2}
+.tile span{font-size:13px;color:var(--soft);display:flex;align-items:center;gap:7px}
+.tile i{width:10px;height:10px;border-radius:50%;background:var(--c)}
+.tile b{font-size:21px;font-weight:700;overflow-wrap:anywhere}.tile.big b{font-size:28px}
+.cta{width:100%;margin-top:12px;border:0;border-radius:16px;padding:14px;font-size:16px;font-weight:700;color:#fff;background:linear-gradient(135deg,var(--g2),#7C3AED);box-shadow:0 12px 22px -12px #4F46E5}
+.cta:disabled{opacity:.45;box-shadow:none}
+.item{display:flex;align-items:center;gap:12px;padding:12px 0;border-bottom:1px solid var(--line)}
+.item>div:nth-child(2){flex:1;min-width:0}.item small{display:block;color:var(--soft);font-size:12.5px}
+.item time{font-size:11.5px;color:var(--soft);text-align:end}
+.ico{width:42px;height:42px;border-radius:13px;display:grid;place-items:center;background:var(--chip);background:color-mix(in srgb,var(--c) 16%,var(--card));flex:none}
+.card h2{font-size:17px;margin:0 0 6px}.empty,.note{color:var(--soft);font-size:13.5px;margin:8px 0}
+.guide .item i{width:12px;height:12px;border-radius:50%;background:var(--c);flex:none}
+.nav{margin-top:auto;position:sticky;bottom:0;display:flex;background:var(--card);border-top:1px solid var(--line);padding:6px 8px calc(6px + env(safe-area-inset-bottom,0px))}
+.nav button{flex:1;border:0;background:none;color:var(--soft);font-size:12px;font-weight:600;display:flex;flex-direction:column;align-items:center;gap:2px;padding:6px}
+.nav .on{color:var(--acc)}.nav svg{width:22px;height:22px;stroke:currentColor;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+.toast{position:fixed;left:50%;bottom:calc(84px + env(safe-area-inset-bottom,0px));transform:translate(-50%,16px);background:var(--ink);color:var(--bg);padding:10px 18px;border-radius:999px;font-size:14px;opacity:0;pointer-events:none;transition:.25s}
+.toast.show{opacity:1;transform:translate(-50%,0)}
+.warn{margin:10px 0 0;font-size:13px;font-weight:600;color:#B45309;color:color-mix(in srgb,#F59E0B 65%,var(--ink))}.warn:empty{display:none}
+.acts{display:flex;gap:10px;margin-top:12px}.acts .cta{margin-top:0}.acts .cta:first-child{flex:1}
+.cta.alt{width:auto;padding:14px 22px;background:var(--chip);color:var(--acc);box-shadow:none}
+button.logo{border:0;color:#fff;margin-inline-start:auto}
+.x{border:0;background:none;color:var(--soft);font-size:22px;line-height:1;padding:4px 8px;border-radius:8px}
+#svg text{fill:#fff;stroke:none;font-size:12px;font-weight:600}
+.tile.big{background:linear-gradient(135deg,#047857,#0F766E);border-color:transparent}
+.tile.big span{color:rgba(255,255,255,.9)}.tile.big i{background:#A7F3D0}.tile.big b{color:#fff}
+.tiles{transition:opacity .25s}.tiles.dim{opacity:.55}
+.card .ch{display:flex;align-items:baseline;justify-content:space-between;margin:0 0 10px}.ch small{font-size:12px;color:var(--soft);font-weight:500}
+.chip{transition:background .2s,border-color .2s,color .2s,box-shadow .2s}.chip.on{box-shadow:0 8px 16px -8px var(--c)}
+button{transition:transform .12s}button:active:not(:disabled){transform:scale(.97)}
+.nav{box-shadow:0 -10px 24px -18px rgba(15,23,42,.45)}
+.nav svg{box-sizing:content-box;padding:4px 18px;border-radius:999px;transition:background .2s}
+.nav .on svg{background:var(--chip);background:color-mix(in srgb,var(--acc) 16%,transparent)}
+div.empty{display:grid;place-items:center;margin:14px 0 0}
+div.empty svg{width:56px;height:56px;padding:14px;border-radius:50%;background:var(--chip);stroke:var(--acc);fill:none;stroke-width:1.8;stroke-linecap:round}
+.view.on{animation:vin .28s ease both}@keyframes vin{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+@media (prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
+.sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)}
+.open{flex:1;min-width:0;text-align:start;border:0;background:none;color:inherit;padding:0}
+.toast.act{pointer-events:auto}.toast button{border:0;background:none;color:inherit;font-weight:700;text-decoration:underline;margin-inline-start:12px;padding:0}
+.nm{margin-top:12px}.seg button{min-height:36px}
+#cs{width:100%;margin-top:10px;padding:10px;border:1.5px solid var(--line);border-radius:12px;background:var(--bg);color:var(--ink);font:inherit;font-weight:600}
+#v-conv .tiles{margin-top:12px}
+.stage{flex-direction:column;align-items:stretch;gap:6px}
+#svg{flex:none;width:100%;height:140px}
+.tot{display:flex;align-items:center;gap:10px;text-align:start;border-top:1px solid rgba(255,255,255,.22);padding-top:8px}
+.tot b{display:block;flex:1;text-align:end;font-size:34px;line-height:1.15}
+.hu{border:1px solid rgba(255,255,255,.4);background:rgba(255,255,255,.14);color:#fff;border-radius:999px;padding:6px 12px;font-weight:600;font-size:13px;white-space:nowrap;min-height:36px}
+.app:not([data-v="calc"]) .hero{padding-bottom:48px}
+.app:not([data-v="calc"]) .view{margin-top:-28px}
+.more{margin-top:12px}.more summary{cursor:pointer;color:var(--acc);font-weight:600;padding:8px 0}.more .g{margin-top:8px}
+.x{min-width:44px;min-height:44px}
+@media(pointer:coarse){.kb .nav{display:none}}
+.chips{display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:8px;overflow:visible;margin:0;padding:2px 0 6px}
+.chip{grid-column:span 2;justify-content:center;gap:5px;padding:9px 4px;font-size:14px;min-width:0;text-align:center}
+.chip:nth-child(n+4){grid-column:span 3}
+.chip svg{flex:none;width:18px;height:18px}
+</style>
+</head>
+<body>
+<div class="app" data-v="calc">
+  <header class="hero">
+    <div class="top"><div class="logo"><svg viewBox="0 0 24 24"><path d="M4 8 12 3l8 5v8l-8 5-8-5Z"/><path d="M4 8l8 5 8-5M12 13v8"/></svg></div>
+      <div><h1>ভূমি পরিমাপ</h1><p>জমির ক্ষেত্রফল ক্যালকুলেটর</p></div><button class="logo" id="theme" aria-label="থিম বদলান"><svg viewBox="0 0 24 24"><path d="M20 14.5A8 8 0 0 1 9.5 4 8 8 0 1 0 20 14.5Z"/></svg></button></div>
+    <div class="stage"><svg id="svg" role="img" aria-label="জমির আকৃতির নকশা" viewBox="0 0 200 130"></svg>
+      <div class="tot"><small>মোট ক্ষেত্রফল</small><b id="tot">০</b><button type="button" class="hu" id="hu" aria-label="একক বদলান">বর্গফুট ▾</button></div></div>
+  </header>
+
+  <section class="view on" id="v-calc">
+    <div class="chips" id="chips"></div>
+    <div class="card"><div class="row2"><b>মাপের একক</b><div class="seg" id="seg"><button class="on" data-u="ft" aria-pressed="true">ফুট</button><button data-u="m" aria-pressed="false">মিটার</button><button data-u="hat" aria-pressed="false">হাত</button></div></div><div id="form"></div><p class="warn" id="hint" role="alert"></p><p class="sr" id="sr" aria-live="polite"></p></div>
+    <div class="card"><h2 class="ch">ফলাফল <small id="rs">বিভিন্ন এককে</small></h2><div class="tiles" id="tiles"></div><label class="f nm"><span>জমির নাম (ঐচ্ছিক)</span><div><input id="nm" maxlength="30" autocomplete="off" placeholder="যেমন: বাড়ির পেছনের জমি"></div></label><div class="acts"><button class="cta" id="save">হিসাব সংরক্ষণ করুন</button><button class="cta alt" id="copy">কপি</button><button class="cta alt" id="share" hidden>শেয়ার</button></div></div>
+  </section>
+
+  <section class="view" id="v-hist"><div class="card"><h2>হিসাবের ইতিহাস</h2><div id="hist"></div></div></section>
+
+  <section class="view" id="v-conv"><div class="card"><h2>এলাকা রূপান্তর</h2>
+    <label class="f"><span>পরিমাণ</span><div><input id="cv" value="1" inputmode="decimal" autocomplete="off"></div></label>
+    <div class="seg" id="qf" style="margin-top:10px"><button data-q="1">১</button><button data-q="5">৫</button><button data-q="10">১০</button></div><select id="cs" aria-label="কোন এককে আছে"></select><div class="tiles" id="ct"></div>
+    <p class="note">কাঠা ও বিঘার মান “গাইড” ট্যাবের সেটিং অনুযায়ী হিসাব হয়।</p></div></section>
+
+  <section class="view guide" id="v-guide"><div class="card"><div class="row2"><b>কাঠার মান</b><div class="seg" id="ks"><button data-k="720" class="on" aria-pressed="true">৭২০ বর্গফুট</button><button data-k="165" aria-pressed="false">১.৬৫ শতাংশ</button></div></div>
+    <p class="note">১.৬৫ শতাংশ ধরলে ১ কাঠা = ৭১৮.৭৪ বর্গফুট এবং ১ বিঘা = ৩৩ শতাংশ হয়। দলিলে যে মান লেখা আছে সেটি বেছে নিন।</p></div>
+  <div class="card"><h2>এককের নির্দেশিকা</h2><div id="guide"></div>
+    <p class="note">এলাকাভেদে সামান্য পার্থক্য হতে পারে। দলিলের জন্য স্থানীয় ভূমি অফিসে যাচাই করুন।</p></div></section>
+
+  <nav class="nav">
+    <button class="on" data-v="v-calc"><svg viewBox="0 0 24 24"><rect x="4" y="2.5" width="16" height="19" rx="3"/><path d="M8 7h8M8 12h.01M12 12h.01M16 12h.01M8 16h.01M12 16h.01M16 16h.01"/></svg>ক্যালকুলেটর</button>
+    <button data-v="v-conv"><svg viewBox="0 0 24 24"><path d="M7 4 3 8l4 4M3 8h14M17 20l4-4-4-4M21 16H7"/></svg>রূপান্তর</button>
+    <button data-v="v-hist"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg>ইতিহাস</button>
+    <button data-v="v-guide"><svg viewBox="0 0 24 24"><path d="M4 5.5c2-1 5-1 8 0v13c-3-1-6-1-8 0ZM20 5.5c-2-1-5-1-8 0v13c3-1 6-1 8 0Z"/></svg>গাইড</button>
+  </nav>
+</div>
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+<script>
+(()=>{
+const $=s=>document.querySelector(s),$$=s=>[...document.querySelectorAll(s)];
+const F=(x,d=2)=>Number(x).toLocaleString('bn-BD',{minimumFractionDigits:d,maximumFractionDigits:d});
+const D={
+ rect:{n:'আয়তক্ষেত্র',c:'#4F46E5',i:'<rect x="3.5" y="6" width="17" height="12" rx="2"/>',f:[['l','দৈর্ঘ্য'],['w','প্রস্থ'],['l2','উল্টো দিকের দৈর্ঘ্য'],['w2','উল্টো দিকের প্রস্থ']]},
+ tri:{n:'ত্রিভুজ',c:'#0369A1',i:'<path d="M12 4 21 19H3Z"/>',f:[['a','বাহু a'],['b','বাহু b'],['c','বাহু c']]},
+ trap:{n:'ট্রাপিজিয়াম',c:'#047857',i:'<path d="M7 6h10l4 12H3Z"/>',f:[['a','উপরের বাহু'],['b','নিচের বাহু'],['h','উচ্চতা']]},
+ circ:{n:'বৃত্ত',c:'#B45309',i:'<circle cx="12" cy="12" r="8"/>',f:[['r','ব্যাসার্ধ']]},
+ irr:{n:'অনিয়মিত',c:'#E11D48',i:'<path d="M4 14 9 4l6 3 5 9-7 4-6-2Z"/>',f:[]}};
+const K={},S={},LU={ft:[1,'ফুট'],m:[3.280839895,'মি'],hat:[1.5,'হাত']};
+const CU=[['shotok','শতাংশ',3],['katha','কাঠা',3],['bigha','বিঘা',4],['acre','একর',5],['sqm','বর্গমিটার',2],['sqft','বর্গফুট',2],['sqhat','বর্গহাত',2]];
+const HU=[['sqft','বর্গফুট',2],['shotok','শতাংশ',3],['katha','কাঠা',3],['bigha','বিঘা',4],['acre','একর',5],['sqm','বর্গমিটার',2]];
+const esc=x=>String(x||'').replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const T=[['shotok','শতাংশ',3],['katha','কাঠা',3],['bigha','বিঘা',4],['acre','একর',5],['sqm','বর্গমিটার',2]];
+let shape='rect',unit='ft',nTri=2,vals={rect_l:'60',rect_w:'40'},H=[],tm,srt,std='720',fk='',hi=0;
+try{const x=JSON.parse(localStorage.getItem('bm_h')||'[]');H=Array.isArray(x)?x.filter(h=>h&&D[h.s]&&h.a>0):[];std=localStorage.getItem('bm_k')==='165'?'165':'720';hi=Math.max(0,+localStorage.getItem('bm_hu')||0)%HU.length}catch{}
+
+const P=v=>parseFloat(String(v||'').replace(/[০-৯]/g,d=>'০১২৩৪৫৬৭৮৯'.indexOf(d)).replace(/,/g,''));
+const n=k=>(P(vals[shape+'_'+k])||0)*LU[unit][0];
+const heron=(a,b,c)=>{if(!(a>0&&b>0&&c>0&&a+b>c&&a+c>b&&b+c>a))return NaN;const s=(a+b+c)/2;return Math.sqrt(s*(s-a)*(s-b)*(s-c))};
+const tris=()=>Array.from({length:nTri},(_,i)=>['a','b','c'].map(c=>n((i+1)+c)));
+function calc(){
+ if(shape==='rect'){const l=n('l'),w=n('w'),l2=n('l2')||l,w2=n('w2')||w;return l>0&&w>0?(l+l2)/2*((w+w2)/2):NaN}
+ if(shape==='tri')return heron(n('a'),n('b'),n('c'));
+ if(shape==='trap'){const a=n('a'),b=n('b'),h=n('h');return a>0&&b>0&&h>0?(a+b)/2*h:NaN}
+ if(shape==='circ'){const r=n('r');return r>0?Math.PI*r*r:NaN}
+ const t=tris().map(x=>heron(...x)).filter(x=>x>0);return t.length?t.reduce((p,q)=>p+q):NaN}
+
+const tp=(a,b,c)=>{const x=(c*c+b*b-a*a)/(2*c);return[[0,0],[c,0],[x,Math.sqrt(Math.max(b*b-x*x,0))]]};
+const fit=(p,W,Hh,cx,cy)=>{const xs=p.map(q=>q[0]),ys=p.map(q=>q[1]),x0=Math.min(...xs),y0=Math.min(...ys),w=Math.max(...xs)-x0||1,h=Math.max(...ys)-y0||1,s=Math.min(W/w,Hh/h);return p.map(q=>[cx-w*s/2+(q[0]-x0)*s,cy+h*s/2-(q[1]-y0)*s])};
+const poly=p=>`<polygon points="${p.map(q=>q.map(v=>v.toFixed(1))).join(' ')}"/>`;
+const cp=()=>{const ks={rect:['l','w'],tri:['a','b','c'],trap:['a','b','h'],circ:['r']}[shape];let t='';
+ if(!ks)t=F(nTri,0)+' টি ত্রিভুজ';else{const v=ks.map(k=>P(vals[shape+'_'+k])).filter(x=>x>0);if(v.length)t=(shape==='circ'?'r = ':'')+v.map(x=>F(x,x%1?1:0)).join(' × ')+' '+LU[unit][1]}
+ return t?`<text x="100" y="124" text-anchor="middle">${t}</text>`:''};
+const raw=(k,fb)=>P(vals[shape+'_'+k])||(fb?P(vals[shape+'_'+fb]):0)||0;
+const lbl=x=>x>0?F(x,x%1?1:0):'';
+const shp=p=>poly(p).replace('<polygon','<polygon style="fill:url(#ht)"')+p.map(q=>`<circle cx="${q[0].toFixed(1)}" cy="${q[1].toFixed(1)}" r="2.6" style="fill:#fff;stroke:none"/>`).join('');
+function edges(p,ks,fb){const m=p.length,cx=p.reduce((t,q)=>t+q[0],0)/m,cy=p.reduce((t,q)=>t+q[1],0)/m;let o='';
+ for(let i=0;i<m;i++){const k=ks[i];if(!k)continue;const a=p[i],b=p[(i+1)%m],mx=(a[0]+b[0])/2,my=(a[1]+b[1])/2;let dx=mx-cx,dy=my-cy;const d=Math.hypot(dx,dy)||1;dx/=d;dy/=d;
+  if(k===fk)o+=`<line x1="${a[0].toFixed(1)}" y1="${a[1].toFixed(1)}" x2="${b[0].toFixed(1)}" y2="${b[1].toFixed(1)}" style="stroke:#FDE047;stroke-width:5"/>`;
+  const t=lbl(raw(k,fb&&fb[k]));if(t)o+=`<text x="${(mx+dx*10).toFixed(1)}" y="${(my+dy*10+4).toFixed(1)}" text-anchor="middle">${t}</text>`}
+ return o}
+function draw(){
+ const v=(k,d)=>n(k)||d;let g='<defs><pattern id="ht" width="6" height="6" patternUnits="userSpaceOnUse" patternTransform="rotate(45)"><rect width="6" height="6" style="fill:rgba(255,255,255,.14);stroke:none"/><line y2="6" style="stroke:rgba(255,255,255,.3);stroke-width:2"/></pattern></defs>';
+ if(shape==='rect'){const l=v('l',10),w=v('w',7),l2=n('l2')||l,w2=n('w2')||w,h=(w+w2)/2,p=fit([[0,0],[l,0],[(l+l2)/2,h],[(l-l2)/2,h]],150,76,100,60);g+=shp(p)+edges(p,['l','w2','l2','w'],{l2:'l',w2:'w'})}
+ else if(shape==='tri'){let a=n('a'),b=n('b'),c=n('c');if(!(heron(a,b,c)>0))[a,b,c]=[8,9,10];const p=fit(tp(a,b,c),150,76,100,60);g+=shp(p)+edges(p,['c','a','b'])}
+ else if(shape==='trap'){const a=v('a',12),b=v('b',8),h=v('h',7),m=Math.max(a,b),p=fit([[(m-a)/2,h],[(m+a)/2,h],[(m+b)/2,0],[(m-b)/2,0]],150,76,100,60),x=(p[0][0]+p[1][0])/2;
+  g+=shp(p)+edges(p,['a',0,'b',0])+`<line x1="${x.toFixed(1)}" y1="${p[0][1].toFixed(1)}" x2="${x.toFixed(1)}" y2="${p[3][1].toFixed(1)}" stroke-dasharray="3 3" style="stroke-width:${fk==='h'?4:1.5}px;${fk==='h'?'stroke:#FDE047':''}"/>`+(lbl(raw('h'))?`<text x="${(x+10).toFixed(1)}" y="${((p[0][1]+p[3][1])/2+4).toFixed(1)}" text-anchor="middle">${lbl(raw('h'))}</text>`:'')}
+ else if(shape==='circ'){g+=`<circle cx="100" cy="60" r="40" style="fill:url(#ht)"/><path d="M100 60h40" stroke-dasharray="4 4" style="${fk==='r'?'stroke:#FDE047;stroke-width:4px':''}"/><circle cx="100" cy="60" r="2.6" style="fill:#fff;stroke:none"/>`+(lbl(raw('r'))?`<text x="120" y="52" text-anchor="middle">${lbl(raw('r'))}</text>`:'')}
+ else{const s=180/nTri;g+=tris().map((t,i)=>{if(!(heron(...t)>0))t=[6,7,8];const p=fit(tp(...t),s-14,70,10+s*(i+.5),60);return shp(p)+(nTri<=3?edges(p,[(i+1)+'c',(i+1)+'a',(i+1)+'b']):'')}).join('')}
+ $('#svg').innerHTML=g+(shape==='irr'&&nTri>3?cp():'')}
+
+function form(){
+ const u=LU[unit][1];
+ const inp=(k,l)=>{const id=shape+'_'+k;return `<label class="f"><span>${l}</span><div><input id="${id}" value="${vals[id]||''}" inputmode="decimal" enterkeyhint="next" placeholder="০" autocomplete="off"><em>${u}</em></div></label>`};
+ let h='';
+ if(shape==='irr'){
+  for(let k=1;k<=nTri;k++)h+=`<div class="grp"><b>ত্রিভুজ ${F(k,0)}</b><div class="g" style="--n:3">${['a','b','c'].map(c=>inp(k+c,'বাহু '+c)).join('')}</div></div>`;
+  h+=`<div class="row2">${nTri<5?'<button type="button" class="ghost" id="add">+ ত্রিভুজ যোগ</button>':'<span></span>'}${nTri>1?'<button type="button" class="ghost" id="del">− বাদ দিন</button>':''}</div>`;
+  h+='<p class="note">ছবিতে ত্রিভুজগুলো পাশাপাশি আঁকা, জমির আসল অবস্থান নয়।</p>';
+ }else if(shape==='rect'){const f=D.rect.f,op=vals.rect_l2||vals.rect_w2?' open':'';h=`<div class="g" style="--n:2">${inp(f[0][0],f[0][1])}${inp(f[1][0],f[1][1])}</div><details class="more"${op}><summary>উল্টো পাশের মাপ আলাদা?</summary><div class="g" style="--n:2">${inp(f[2][0],f[2][1])}${inp(f[3][0],f[3][1])}</div><p class="note">ফাঁকা রাখলে প্রথম মাপই ধরা হবে; আলাদা হলে গড় ধরে হিসাব হয়।</p></details>`}else{const f=D[shape].f;h=`<div class="g" style="--n:${f.length>2?3:f.length}">${f.map(x=>inp(x[0],x[1])).join('')}</div>`}
+ $('#form').innerHTML=h}
+
+function upd(){
+ const a=calc(),ok=a>0;draw();
+ tween(ok?a:0);hint();
+ $('#tiles').innerHTML=T.map((t,i)=>`<div class="tile${i?'':' big'}" style="--c:var(--c-${t[0]})"><span><i></i>${t[1]}</span><b>${ok?F(a*K[t[0]],t[2]):'—'}</b></div>`).join('');
+ $('#save').disabled=$('#copy').disabled=$('#share').disabled=!ok;clearTimeout(srt);srt=setTimeout(()=>{$('#sr').textContent=ok?'মোট '+F(a)+' বর্গফুট, '+F(a*K.shotok,3)+' শতাংশ':''},900);$('#tiles').classList.toggle('dim',!ok);$('#rs').textContent=ok?'বিভিন্ন এককে':'মাপ দিলে হিসাব দেখা যাবে'}
+
+let cur=0,raf;
+function tween(to){cancelAnimationFrame(raf);const f=cur,t0=performance.now(),el=$('#tot');
+ const put=v=>{el.textContent=F(v*K[HU[hi][0]],HU[hi][2]);const L=el.textContent.length;el.style.fontSize=(L>13?22:L>10?28:34)+'px'};
+ if(matchMedia('(prefers-reduced-motion:reduce)').matches){cur=to;put(to);return}
+ const step=t=>{const p=Math.min((t-t0)/320,1);cur=f+(to-f)*(1-Math.pow(1-p,3));put(cur);if(p<1)raf=requestAnimationFrame(step)};raf=requestAnimationFrame(step)}
+function hint(){let m='';
+ if(shape==='tri'){const a=n('a'),b=n('b'),c=n('c');if(a>0&&b>0&&c>0&&!(heron(a,b,c)>0))m='এই তিন বাহু দিয়ে ত্রিভুজ হয় না — দুই বাহুর যোগফল তৃতীয়টির চেয়ে বড় হতে হবে।'}
+ else if(shape==='irr')tris().forEach((t,i)=>{if(t.every(x=>x>0)&&!(heron(...t)>0))m='ত্রিভুজ '+F(i+1,0)+' বৈধ নয় — বাহুর মাপ মিলিয়ে দেখুন।'});
+ if(shape==='rect'&&[['l','l2'],['w','w2']].some(p=>{const x=n(p[0]),y=n(p[1]);return x>0&&y>0&&Math.abs(x-y)/Math.max(x,y)>.1}))m='দুই পাশের মাপে ১০%-এর বেশি পার্থক্য — ফল আনুমানিক। অনিয়মিত মোডে ত্রিভুজ ভাগ করে মাপুন।';
+ const w=$('#hint');if(w.textContent!==m)w.textContent=m}
+function hist(){
+ $('#hist').innerHTML=H.length?H.map((h,i)=>`<div class="item" style="--c:${D[h.s].c}"><div class="ico"><svg viewBox="0 0 24 24">${D[h.s].i}</svg></div><button class="open" data-l="${i}"><b>${esc(h.nm)||D[h.s].n}</b><small>${F(h.a)} বর্গফুট · ${F(h.a*K.shotok,3)} শতাংশ · ${F(h.a*K.katha,3)} কাঠা</small></button><time>${h.d?new Date(h.d).toLocaleString('bn-BD',{day:'numeric',month:'short',year:'numeric'}):esc(h.t)}</time><button class="x" data-i="${i}" aria-label="মুছুন">×</button></div>`).join('')+'<button class="ghost" id="clr" style="margin-top:12px">ইতিহাস মুছুন</button>'
+ :'<div class="empty"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg></div><p class="empty" style="text-align:center">এখনো কোনো হিসাব নেই। ক্যালকুলেটরে মাপ দিয়ে “হিসাব সংরক্ষণ করুন” চাপুন।</p>'}
+const store=()=>{try{localStorage.setItem('bm_h',JSON.stringify(H))}catch{}};
+function toast(m,fn){const t=$('#toast');t.textContent=m;if(fn){const b=document.createElement('button');b.textContent='পূর্বাবস্থা';b.onclick=()=>{fn();t.classList.remove('show')};t.append(b)}t.classList.toggle('act',!!fn);t.classList.add('show');clearTimeout(tm);tm=setTimeout(()=>t.classList.remove('show'),fn?5000:2200)}
+function mkK(){const k=std==='720'?720:718.74;Object.assign(S,{shotok:435.6,katha:k,bigha:20*k,acre:43560,sqm:10.763910417,sqft:1,sqhat:2.25});for(const x in S)K[x]=1/S[x];
+ $$('#ks button').forEach(b=>{const on=b.dataset.k===std;b.classList.toggle('on',on);b.setAttribute('aria-pressed',on)})}
+function guide(){const z=x=>F(x,x%1?2:0),G=[['shotok','১ শতাংশ','৪৩৫.৬ বর্গফুট = '+F(S.shotok/S.sqm,2)+' বর্গমিটার'],['katha','১ কাঠা',z(S.katha)+' বর্গফুট = '+F(S.katha/S.shotok,2)+' শতাংশ'],['bigha','১ বিঘা','২০ কাঠা = '+z(S.bigha)+' বর্গফুট = '+F(S.bigha/S.shotok,2)+' শতাংশ'],['acre','১ একর','১০০ শতাংশ = ৪৩,৫৬০ বর্গফুট'],['sqm','১ বর্গমিটার',F(S.sqm,2)+' বর্গফুট']];
+ $('#guide').innerHTML=G.map(g=>`<div class="item" style="--c:var(--c-${g[0]})"><i></i><div><b>${g[1]}</b><small>${g[2]}</small></div></div>`).join('')}
+function conv(){const v=P($('#cv').value),f=$('#cs').value,ok=v>0;
+ $('#ct').innerHTML=CU.filter(u=>u[0]!==f).map(u=>`<div class="tile" style="--c:var(--c-${u[0]})"><span><i></i>${u[1]}</span><b>${ok?F(v*S[f]/S[u[0]],u[2]):'—'}</b></div>`).join('')}
+function setShape(x){shape=x;$$('.chip').forEach(c=>{const on=c.dataset.s===x;c.classList.toggle('on',on);c.setAttribute('aria-pressed',on)});form();upd()}
+function setUnit(u,cv){if(cv){const r=LU[unit][0]/LU[u][0];for(const k in vals){const x=P(vals[k]);if(x>0)vals[k]=String(+(x*r).toFixed(2))}}
+ unit=u;$$('#seg button').forEach(b=>{const on=b.dataset.u===u;b.classList.toggle('on',on);b.setAttribute('aria-pressed',on)});form();upd()}
+function go(v){$$('.nav button').forEach(b=>{const on=b.dataset.v===v;b.classList.toggle('on',on);on?b.setAttribute('aria-current','page'):b.removeAttribute('aria-current')});$$('.view').forEach(x=>x.classList.toggle('on',x.id===v));$('.app').dataset.v=v.slice(2);scrollTo(0,0)}
+const txt=()=>D[shape].n+': '+F(calc())+' বর্গফুট | '+T.map(x=>F(calc()*K[x[0]],x[2])+' '+x[1]).join(' | ');
+async function copyTxt(t){try{await navigator.clipboard.writeText(t);return 1}catch{}try{const a=document.createElement('textarea');a.value=t;a.style.cssText='position:fixed;opacity:0';document.body.append(a);a.select();const ok=document.execCommand('copy');a.remove();return ok}catch{return 0}}
+
+$('#chips').innerHTML=Object.entries(D).map(([k,d])=>`<button class="chip${k===shape?' on':''}" aria-pressed="${k===shape}" data-s="${k}" style="--c:${d.c}"><svg viewBox="0 0 24 24">${d.i}</svg>${d.n}</button>`).join('');
+$('#cs').innerHTML=CU.map(u=>`<option value="${u[0]}">${u[1]}</option>`).join('');$('#cs').value='katha';
+
+$('#chips').onclick=e=>{const b=e.target.closest('.chip');if(b)setShape(b.dataset.s)};
+$('#seg').onclick=e=>{const b=e.target.closest('button');if(b&&b.dataset.u!==unit){setUnit(b.dataset.u,1);toast('মাপ '+LU[unit][1]+'-এ রূপান্তর করা হয়েছে')}};
+$('#ks').onclick=e=>{const b=e.target.closest('button');if(!b)return;std=b.dataset.k;try{localStorage.setItem('bm_k',std)}catch{}mkK();guide();upd();conv();hist()};
+$('#qf').onclick=e=>{const b=e.target.closest('button');if(b){$('#cv').value=b.dataset.q;conv()}};
+$('#cv').oninput=conv;$('#cs').onchange=conv;
+$('#form').oninput=e=>{vals[e.target.id]=e.target.value;upd()};
+$('#form').addEventListener('focusin',e=>{if(!e.target.matches('input'))return;e.target.select();fk=e.target.id.slice(shape.length+1);draw()});
+$('#form').addEventListener('focusout',()=>{fk='';draw()});
+$('#form').onkeydown=e=>{if(e.key!=='Enter'||!e.target.matches('input'))return;e.preventDefault();const i=$$('#form input'),x=i[i.indexOf(e.target)+1];x?x.focus():e.target.blur()};
+document.addEventListener('focusin',e=>root.classList.toggle('kb',e.target.matches('input')));
+document.addEventListener('focusout',()=>root.classList.remove('kb'));
+$('#hu').onclick=()=>{hi=(hi+1)%HU.length;try{localStorage.setItem('bm_hu',hi)}catch{}$('#hu').textContent=HU[hi][1]+' ▾';tween(cur)};
+$('#form').onclick=e=>{const b=e.target.closest('button');if(!b)return;if(b.id==='add')nTri++;if(b.id==='del')nTri--;form();upd();const x=b.id==='add'?$('#irr_'+nTri+'a'):($('#add')||$('#del'));if(x)x.focus()};
+$('#save').onclick=()=>{const a=calc();if(!(a>0))return;const v={};for(const k in vals)if(k.startsWith(shape+'_'))v[k]=vals[k];
+ H.unshift({s:shape,a,u:unit,v,n:nTri,nm:$('#nm').value.trim(),d:Date.now()});H=H.slice(0,30);store();hist();$('#nm').value='';toast('ইতিহাসে সংরক্ষিত হয়েছে')};
+$('#hist').onclick=e=>{const b=e.target.closest('button');if(!b)return;
+ if(b.id==='clr'||b.dataset.i!==undefined){const bk=H.slice(),all=b.id==='clr';if(all)H=[];else H.splice(+b.dataset.i,1);store();hist();toast(all?'ইতিহাস মুছে গেছে':'হিসাব মুছে গেছে',()=>{H=bk;store();hist()});return}
+ if(b.dataset.l!==undefined){const h=H[+b.dataset.l];if(!h.v){toast('এই পুরনো হিসাবের মাপ সংরক্ষিত নেই');return}
+  Object.assign(vals,h.v);nTri=h.n||nTri;setUnit(h.u||'ft',0);setShape(h.s);go('v-calc')}};
+$('#copy').onclick=async()=>{if(!(calc()>0))return;toast(await copyTxt(txt())?'ফলাফল কপি হয়েছে':'কপি করা যায়নি')};
+if(navigator.share)$('#share').hidden=false;
+$('#share').onclick=()=>{if(calc()>0)navigator.share({text:txt()}).catch(()=>{})};
+const root=document.documentElement;
+try{const t=localStorage.getItem('bm_t');if(t)root.dataset.theme=t}catch{}
+$('#theme').onclick=()=>{const dark=root.dataset.theme?root.dataset.theme==='dark':matchMedia('(prefers-color-scheme:dark)').matches;root.dataset.theme=dark?'light':'dark';try{localStorage.setItem('bm_t',root.dataset.theme)}catch{}themeIco()};
+function themeIco(){const dark=root.dataset.theme?root.dataset.theme==='dark':matchMedia('(prefers-color-scheme:dark)').matches;$('#theme svg').innerHTML=dark?'<circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/>':'<path d="M20 14.5A8 8 0 0 1 9.5 4 8 8 0 1 0 20 14.5Z"/>';$('#theme').setAttribute('aria-label',dark?'হালকা থিম':'গাঢ় থিম')}
+$$('.nav button').forEach(b=>b.onclick=()=>go(b.dataset.v));
+
+mkK();guide();$('#hu').textContent=HU[hi][1]+' ▾';themeIco();form();upd();hist();conv();go('v-calc');
+})();
+</script>
+</body>
+</html>
